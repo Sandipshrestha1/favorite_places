@@ -1,3 +1,4 @@
+import 'package:favorite_places/screens/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: " Great place ",
       theme: theme,
+      home: const PlacesScreen(),
     );
   }
 }
