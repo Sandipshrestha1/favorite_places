@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:favorite_places/models/place.dart';
+import 'package:favorite_places/screens/map.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
@@ -84,6 +86,15 @@ class _LocationInputState extends State<LocationInput> {
     widget.onSelectLocation(_pickedLocation!);
   }
 
+  void _selectonMap() async {
+    final pickedLocation = await Navigator.of(context)
+        .push<LatLng>(MaterialPageRoute(builder: (ctx) => MapScreen()));
+
+    if (pickedLocation == null) {
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget previewContent = Text(
@@ -132,7 +143,7 @@ class _LocationInputState extends State<LocationInput> {
             TextButton.icon(
               icon: const Icon(Icons.map),
               label: const Text("Select on Map "),
-              onPressed: () {},
+              onPressed: _selectonMap,
             ),
           ],
         ),
