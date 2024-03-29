@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:favorite_places/models/place.dart';
 import 'package:favorite_places/screens/map.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +30,25 @@ class _LocationInputState extends State<LocationInput> {
     final lng = _pickedLocation!.longitude;
 
     return "https://maps.googleapis.com/maps/api/staticmap?center$lat,$lng=&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=YOUR_API_KEY&signature=YOUR_SIGNATURE";
+  }
+
+  Future<void> _savePlace(double latitude, double longitude) async {
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=YOUR_API_KEY');
+    final response = await http.get(url);
+    final resData = json.decode(response.body);
+    final address = resData['result'][0]['formatted_address'];
+
+    setState(() {
+      _pickedLocation = PlaceLocation(
+          latitude: latitude, longitude: longitude, address: address);
+
+      _isGettingLocation = false;
+    });
+    //  print(locationData.latitude);
+    //  print(locationData.longitude);
+
+    widget.onSelectLocation(_pickedLocation!);
   }
 
   void getCurrentLocation() async {
@@ -68,22 +86,7 @@ class _LocationInputState extends State<LocationInput> {
       return;
     }
 
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lng,$lng&key=YOUR_API_KEY');
-    final response = await http.get(url);
-    final resData = json.decode(response.body);
-    final address = resData['result'][0]['formatted_address'];
-
-    setState(() {
-      _pickedLocation =
-          PlaceLocation(latitude: lat, longitude: lng, address: address);
-
-      _isGettingLocation = false;
-    });
-    print(locationData.latitude);
-    print(locationData.longitude);
-
-    widget.onSelectLocation(_pickedLocation!);
+    _savePlace(lat, lng);
   }
 
   void _selectonMap() async {
@@ -93,6 +96,7 @@ class _LocationInputState extends State<LocationInput> {
     if (pickedLocation == null) {
       return;
     }
+    _savePlace(pickedLocation.latitude, pickedLocation.longitude);
   }
 
   @override
